@@ -1,0 +1,47 @@
+name: deploy_resource_workflow
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/*
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8' # Version range or exact version of a Python version to use, using SemVer's version range syntax 
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade build
+          python -m pip install --upgrade twine
+      - name: AZ Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SERVICE_PRINCIPAL }} # SETUP: replace AZURE_SERVICE_PRINCIPAL with your own secret name    
+      - name: configure Azure defaults 
+        run: | 
+          az configure --defaults group=azureml workspace=ws01ent location=westus2
+      - name: Create RG
+        uses: ./.github/actions/create_rg
+        with:
+          rgName: 
+          location: 
+      - name: Create Resource
+        uses: ./.github/actions/create_resource
+        with:
+          rgName: 
+          location:
+      - name: Create Deployment
+        uses: ./.github/actions/create_deployment
+        with:
+          rgName: 
+          location:
+          resourceName:

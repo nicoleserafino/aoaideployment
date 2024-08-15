@@ -1,0 +1,29 @@
+name: Create Deployment
+description: 'Creates a deployment in Azure OpenAI resource'
+
+inputs:
+  rgName:
+    description: 'Name of the resource group to deploy to'
+    required: true
+  location:
+    description: 'Location of the resource to deploy to'
+    required: true
+  resourceName:
+    description: 'Name of the resource to deploy to'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create RG
+      id: jobRun
+      shell: bash
+      run: |
+        az cognitiveservices account deployment create \
+          --name ${{ inputs.resourceName }}  \
+          --resource-group  ${{ inputs.rgName }} \
+          --deployment-name ${{ inputs.rgName }} \
+          --model-name ${{ inputs.rgName }} \
+          --model-format OpenAI \
+          --sku-capacity "1" \
+          --sku-name "Standard"

@@ -1,0 +1,19 @@
+name: Create RG
+description: 'Creates a resource group in Azure.'
+
+inputs:
+  rgName:
+    description: 'Name of the resource group to create.'
+    required: true
+  location:
+    description: 'Location of the resource group.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create RG
+      id: jobRun
+      shell: bash
+      run: |
+        az group create --name ${{ inputs.rgName }} --location ${{ inputs.location }}
